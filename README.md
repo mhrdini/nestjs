@@ -63,16 +63,16 @@ $ yarn run test:cov
 
 ```bash
 # module
-$ nest g module users
+$ nest g module [resource-name]
 
 # controller
-$ nest g controller users
+$ nest g controller [resource-name]
 
 # service
-$ nest g service users
+$ nest g service [resource-name]
 
 # OR all at once
-$ nest g resource users
+$ nest g resource [resource-name]
 ```
 
 ## Set up Supabase and Prisma

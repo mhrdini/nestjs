@@ -8,24 +8,39 @@ import {
   Delete,
   ParseIntPipe,
   Query,
+  Ip,
 } from '@nestjs/common'
 import { EmployeesService } from './employees.service'
 import { Prisma } from '@prisma/client'
+import { SkipThrottle, Throttle } from '@nestjs/throttler'
+import { MyLoggerService } from 'src/my-logger/my-logger.service'
 
+@SkipThrottle()
 @Controller('employees')
 export class EmployeesController {
   constructor(private readonly employeesService: EmployeesService) {}
+
+  private readonly logger = new MyLoggerService(EmployeesController.name)
 
   @Post()
   create(@Body() createEmployeeDto: Prisma.EmployeeCreateInput) {
     return this.employeesService.create(createEmployeeDto)
   }
 
+  @SkipThrottle({ default: false }) // applies the rate limit to this route
   @Get()
-  findAll(@Query('role') role?: 'INTERN' | 'ENGINEER' | 'ADMIN') {
+  findAll(
+    @Ip() ip: string,
+    @Query('role') role?: 'INTERN' | 'ENGINEER' | 'ADMIN',
+  ) {
+    this.logger.log(
+      `Request for ALL Employees\t${ip}`,
+      EmployeesController.name,
+    )
     return this.employeesService.findAll(role)
   }
 
+  @Throttle({ short: { ttl: 1000, limit: 1 } }) // overrides the defined rate limit in app.module.ts
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.employeesService.findOne(id)
