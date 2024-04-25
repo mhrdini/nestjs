@@ -70,4 +70,41 @@ $ nest g controller users
 
 # service
 $ nest g service users
+
+# OR all at once
+$ nest g resource users
+```
+
+## Set up Supabase and Prisma
+
+1. Create a Supabase account and a new project.
+2. Set up Prisma:
+
+```bash
+$ yarn add prisma -D
+$ yarn dlx prisma init
+```
+
+3. Initialise your `.env` and `schema.prisma` to contain the database and direct URL from Supabase
+   by following the steps [here](https://supabase.com/partners/integrations/prisma).
+4. Model your data in the Prisma schema file, `schema.prisma`, following the steps [here](https://www.prisma.io/docs/getting-started/quickstart).
+5. Create your first migration using the following statement:
+
+```bash
+$ yarn dlx prisma migrate dev --name init
+```
+
+- `dev` will ensure the migration history is saved in the `prisma/migrations` folder in the repo.
+
+6. When you make changes to your schema, you must generate the Prisma client before migrating:
+
+```bash
+$ yarn dlx prisma generate
+$ yarn dlx prisma migrate dev --name [MIGRATION_NAME]
+```
+
+1. Create the database resource:
+
+```bash
+$ nest g resource database
 ```
